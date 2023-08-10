@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Jul 05, 2023 at 03:52 PM
+-- Generation Time: Aug 10, 2023 at 11:27 AM
 -- Server version: 10.4.28-MariaDB
 -- PHP Version: 8.0.28
 
@@ -175,14 +175,14 @@ INSERT INTO `damarage_dispatch` (`id`, `order_job_number`, `date`, `loading_loca
 
 CREATE TABLE `job_entry` (
   `id` int(11) NOT NULL,
-  `order_number` varchar(50) NOT NULL,
+  `order_number` varchar(255) NOT NULL,
   `importer_name` varchar(50) NOT NULL,
-  `mother_vessel_name` varchar(50) NOT NULL,
-  `eta` varchar(20) NOT NULL,
-  `commodity` varchar(50) NOT NULL,
-  `mv_location` varchar(50) NOT NULL,
+  `mother_vessel_name` varchar(255) NOT NULL,
+  `eta` varchar(255) NOT NULL,
+  `commodity` varchar(255) NOT NULL,
+  `mv_location` varchar(255) NOT NULL,
   `bl_quantity` int(11) NOT NULL,
-  `stevedore_name` varchar(50) NOT NULL,
+  `stevedore_name` varchar(255) NOT NULL,
   `stevedore_contact_number` varchar(20) NOT NULL,
   `time_stamp` datetime NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
@@ -223,9 +223,9 @@ CREATE TABLE `order_job_table` (
   `order_job_id` int(11) NOT NULL,
   `order_number` varchar(50) NOT NULL,
   `job_number` int(50) NOT NULL DEFAULT 0,
-  `order_number_done` int(11) NOT NULL DEFAULT 0,
-  `sixty_percent_done` int(11) NOT NULL DEFAULT 0,
-  `job_completed` int(11) NOT NULL DEFAULT 0
+  `order_number_done` int(1) NOT NULL DEFAULT 0,
+  `sixty_percent_done` int(1) NOT NULL DEFAULT 0,
+  `job_completed` int(1) NOT NULL DEFAULT 0
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
@@ -301,7 +301,7 @@ INSERT INTO `pre_defined_ship` (`id`, `LV_name`, `capacity`, `master_reg_number`
 CREATE TABLE `record_entry` (
   `id` int(11) NOT NULL,
   `order_number` varchar(50) NOT NULL,
-  `job_number` varchar(50) NOT NULL,
+  `job_number` int(50) NOT NULL,
   `date_from_charpotro` date NOT NULL,
   `cp_number_from_charpotro` int(11) NOT NULL,
   `LA_name` varchar(50) NOT NULL,
@@ -320,8 +320,8 @@ CREATE TABLE `record_entry` (
 --
 
 INSERT INTO `record_entry` (`id`, `order_number`, `job_number`, `date_from_charpotro`, `cp_number_from_charpotro`, `LA_name`, `LV_name`, `dest_from`, `dest_to`, `capacity`, `rate`, `LV_master_name`, `LV_master_contact_number`, `date_created`) VALUES
-(61, 'Hasib-13-6-2023-Uddoyon-India', '1', '2023-07-14', 13456, 'KEL-BD', 'Amader Dua', 'Kapashia', 'Dhaka', 155, 200, 'Rashik', '01856212168', '2023-07-05'),
-(62, 'Anik-26-6-2023-Paharika-USA', '1', '2023-07-20', 56475, 'KEL-BD', 'Amader Dua', 'Khulna', 'DHK', 400, 52, 'Fahim', '01521533595', '2023-07-05');
+(61, 'Hasib-13-6-2023-Uddoyon-India', 1, '2023-07-14', 13456, 'KEL-BD', 'Amader Dua', 'Kapashia', 'Dhaka', 155, 200, 'Rashik', '01856212168', '2023-07-05'),
+(62, 'Anik-26-6-2023-Paharika-USA', 1, '2023-07-20', 56475, 'KEL-BD', 'Amader Dua', 'Khulna', 'DHK', 400, 52, 'Fahim', '01521533595', '2023-07-05');
 
 --
 -- Triggers `record_entry`
@@ -428,7 +428,8 @@ ALTER TABLE `damarage_dispatch`
 -- Indexes for table `job_entry`
 --
 ALTER TABLE `job_entry`
-  ADD PRIMARY KEY (`id`);
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `order_number` (`order_number`);
 
 --
 -- Indexes for table `order_job_table`
