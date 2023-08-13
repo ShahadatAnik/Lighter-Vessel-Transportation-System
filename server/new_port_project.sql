@@ -45,22 +45,34 @@ CREATE TABLE `chq_approval` (
 --
 -- Triggers `chq_approval`
 --
-DELIMITER $$
-CREATE TRIGGER `insert_chq_due_list` AFTER UPDATE ON `chq_approval` FOR EACH ROW BEGIN
-  IF NEW.sixty_percent_payment_amount <> OLD.sixty_percent_payment_amount
-     AND NEW.sixty_percent_payment_amount > 0 THEN
-    INSERT INTO chq_due_list (record_entry_id, mode)
-    VALUES (NEW.record_entry_id, '60');
-  END IF;
 
-  IF NEW.forty_percent_payment_amount <> OLD.forty_percent_payment_amount
-     AND NEW.forty_percent_payment_amount > 0 THEN
-    INSERT INTO chq_due_list (record_entry_id, mode)
-    VALUES (NEW.record_entry_id, '40');
-  END IF;
+DELIMITER $$
+CREATE TRIGGER `insert_chq_due_list_40_or_60_percent` AFTER UPDATE ON `chq_approval` FOR EACH ROW BEGIN 
+    DECLARE order_count_40 INT;
+    DECLARE order_count_60 INT;
+    
+    SELECT COUNT(record_entry_id) INTO order_count_40 
+    FROM chq_due_list 
+    WHERE record_entry_id = NEW.record_entry_id 
+    AND mode = '40';
+
+    SELECT COUNT(record_entry_id) INTO order_count_60 
+    FROM chq_due_list 
+    WHERE record_entry_id = NEW.record_entry_id 
+    AND mode = '60';
+
+    IF NEW.forty_percent_payment_amount > 0 AND order_count_40 < 1 THEN 
+        INSERT INTO chq_due_list (record_entry_id, mode) VALUES (NEW.record_entry_id, '40');
+    END IF;
+    
+    IF NEW.sixty_percent_payment_amount > 0 AND order_count_60 < 1 THEN 
+        INSERT INTO chq_due_list (record_entry_id, mode) VALUES (NEW.record_entry_id, '60');
+    END IF;
 END
 $$
 DELIMITER ;
+
+
 
 -- --------------------------------------------------------
 
@@ -137,6 +149,18 @@ CREATE TABLE `job_entry` (
   `time_stamp` datetime NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+--
+-- 5 Dumping data for table `job_entry`
+--
+
+INSERT INTO `job_entry` (`id`, `importer_name`, `mother_vessel_name`, `eta`, `commodity`, `mv_location`, `bl_quantity`, `stevedore_name`, `stevedore_contact_number`, `time_stamp`) VALUES
+(1, 'importer1', 'mv1', '2021-08-11', 'commodity1', 'mv_location1', 100, 'stevedore1', '01700000000', '2023-07-05 13:48:24'),
+(2, 'importer2', 'mv2', '2021-08-11', 'commodity2', 'mv_location2', 200, 'stevedore2', '01700000000', '2023-07-05 13:48:24'),
+(3, 'importer3', 'mv3', '2021-08-11', 'commodity3', 'mv_location3', 300, 'stevedore3', '01700000000', '2023-07-05 13:48:24'),
+(4, 'importer4', 'mv4', '2021-08-11', 'commodity4', 'mv_location4', 400, 'stevedore4', '01700000000', '2023-07-05 13:48:24'),
+(5, 'importer5', 'mv5', '2021-08-11', 'commodity5', 'mv_location5', 500, 'stevedore5', '01700000000', '2023-07-05 13:48:24');
+
+
 -- --------------------------------------------------------
 
 --
@@ -206,6 +230,17 @@ CREATE TABLE `record_entry` (
   `date_created` date NOT NULL,
   `date_updated` date DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- 5 Dumping data for table `record_entry`
+--
+
+INSERT INTO `record_entry` (`id`, `job_entry_id`, `date_from_charpotro`, `cp_number_from_charpotro`, `LA_name`, `LV_name`, `dest_from`, `dest_to`, `capacity`, `rate`, `LV_master_name`, `LV_master_contact_number`, `date_created`, `date_updated`) VALUES
+(1, 1, '2021-08-11', 1, 'LA_name1', 'LV_name1', 'dest_from1', 'dest_to1', 1, 1, 'LV_master_name1', '01700000000', '2023-07-05 13:48:24', '2023-07-05 13:48:24'),
+(2, 1, '2021-08-11', 2, 'LA_name2', 'LV_name2', 'dest_from2', 'dest_to2', 2, 2, 'LV_master_name2', '01700000000', '2023-07-05 13:48:24', '2023-07-05 13:48:24'),
+(3, 2, '2021-08-11', 3, 'LA_name3', 'LV_name3', 'dest_from3', 'dest_to3', 3, 3, 'LV_master_name3', '01700000000', '2023-07-05 13:48:24', '2023-07-05 13:48:24'),
+(4, 3, '2021-08-11', 4, 'LA_name4', 'LV_name4', 'dest_from4', 'dest_to4', 4, 4, 'LV_master_name4', '01700000000', '2023-07-05 13:48:24', '2023-07-05 13:48:24'),
+(5, 3, '2021-08-11', 5, 'LA_name5', 'LV_name5', 'dest_from5', 'dest_to5', 5, 5, 'LV_master_name5', '01700000000', '2023-07-05 13:48:24', '2023-07-05 13:48:24');
 
 --
 -- Triggers `record_entry`
