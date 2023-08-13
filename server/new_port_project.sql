@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Aug 11, 2023 at 03:56 PM
+-- Generation Time: Aug 13, 2023 at 01:30 PM
 -- Server version: 10.4.28-MariaDB
 -- PHP Version: 8.0.28
 
@@ -43,11 +43,21 @@ CREATE TABLE `chq_approval` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Triggers `chq_approval`
+-- Dumping data for table `chq_approval`
 --
 
+INSERT INTO `chq_approval` (`id`, `record_entry_id`, `sixty_percent_payment_amount`, `sixty_percent_payment_chq_number`, `sixty_percent_payment_chq_date`, `forty_percent_payment_amount`, `forty_percent_payment_chq_number`, `forty_percent_payment_chq_date`, `demurrage`, `second_trip`, `third_trip`, `direct_trip`) VALUES
+(1, 1, 1004, '0123456789', '2023-08-16', NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+(2, 2, 2000, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+(3, 3, NULL, NULL, NULL, 600, NULL, NULL, NULL, NULL, NULL, NULL),
+(4, 4, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+(5, 5, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);
+
+--
+-- Triggers `chq_approval`
+--
 DELIMITER $$
-CREATE TRIGGER `insert_chq_due_list_40_or_60_percent` AFTER UPDATE ON `chq_approval` FOR EACH ROW BEGIN 
+CREATE TRIGGER `insert_chq_due_list` AFTER UPDATE ON `chq_approval` FOR EACH ROW BEGIN 
     DECLARE order_count_40 INT;
     DECLARE order_count_60 INT;
     
@@ -72,8 +82,6 @@ END
 $$
 DELIMITER ;
 
-
-
 -- --------------------------------------------------------
 
 --
@@ -89,6 +97,15 @@ CREATE TABLE `chq_due_list` (
   `amount` int(11) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+--
+-- Dumping data for table `chq_due_list`
+--
+
+INSERT INTO `chq_due_list` (`id`, `record_entry_id`, `part_pay`, `payment`, `mode`, `amount`) VALUES
+(3, 1, NULL, NULL, '60', NULL),
+(4, 2, NULL, NULL, '60', NULL),
+(5, 3, NULL, NULL, '40', NULL);
+
 -- --------------------------------------------------------
 
 --
@@ -103,6 +120,17 @@ CREATE TABLE `current_status` (
   `time_updated` datetime NOT NULL,
   `trip_completed` tinyint(1) NOT NULL DEFAULT 0
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `current_status`
+--
+
+INSERT INTO `current_status` (`id`, `record_entry_id`, `current_location`, `remark`, `time_updated`, `trip_completed`) VALUES
+(1, 1, NULL, NULL, '0000-00-00 00:00:00', 0),
+(2, 2, NULL, NULL, '0000-00-00 00:00:00', 0),
+(3, 3, NULL, NULL, '0000-00-00 00:00:00', 0),
+(4, 4, NULL, NULL, '0000-00-00 00:00:00', 0),
+(5, 5, NULL, NULL, '0000-00-00 00:00:00', 0);
 
 -- --------------------------------------------------------
 
@@ -130,6 +158,17 @@ CREATE TABLE `demurrage_dispatch` (
   `daily_despatch` int(11) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+--
+-- Dumping data for table `demurrage_dispatch`
+--
+
+INSERT INTO `demurrage_dispatch` (`id`, `record_entry_id`, `date`, `loading_location`, `unloading_location`, `loading_start_time_stamp`, `loading_completion_time_stamp`, `sailing_time_stamp`, `duration_of_travel_time`, `unloading_start_time_stamp`, `unloading_completion_time_stamp`, `others`, `total_elapsed_time`, `voyage_time`, `free_time`, `total_despatch`, `daily_despatch`) VALUES
+(1, 1, '0000-00-00 00:00:00', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+(2, 2, '0000-00-00 00:00:00', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+(3, 3, '0000-00-00 00:00:00', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+(4, 4, '0000-00-00 00:00:00', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+(5, 5, '0000-00-00 00:00:00', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);
+
 -- --------------------------------------------------------
 
 --
@@ -150,7 +189,7 @@ CREATE TABLE `job_entry` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- 5 Dumping data for table `job_entry`
+-- Dumping data for table `job_entry`
 --
 
 INSERT INTO `job_entry` (`id`, `importer_name`, `mother_vessel_name`, `eta`, `commodity`, `mv_location`, `bl_quantity`, `stevedore_name`, `stevedore_contact_number`, `time_stamp`) VALUES
@@ -159,7 +198,6 @@ INSERT INTO `job_entry` (`id`, `importer_name`, `mother_vessel_name`, `eta`, `co
 (3, 'importer3', 'mv3', '2021-08-11', 'commodity3', 'mv_location3', 300, 'stevedore3', '01700000000', '2023-07-05 13:48:24'),
 (4, 'importer4', 'mv4', '2021-08-11', 'commodity4', 'mv_location4', 400, 'stevedore4', '01700000000', '2023-07-05 13:48:24'),
 (5, 'importer5', 'mv5', '2021-08-11', 'commodity5', 'mv_location5', 500, 'stevedore5', '01700000000', '2023-07-05 13:48:24');
-
 
 -- --------------------------------------------------------
 
@@ -208,6 +246,13 @@ CREATE TABLE `pre_defined_ship` (
   `staffs_info` varchar(255) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+--
+-- Dumping data for table `pre_defined_ship`
+--
+
+INSERT INTO `pre_defined_ship` (`id`, `LV_name`, `capacity`, `master_reg_number`, `masters_name`, `masters_contact_number`, `masters_nid_image_attachment`, `leased`, `company_name`, `proprietors_name`, `office_address`, `ac_number`, `contact_details`, `lv_documents_attachment`, `status`, `staffs_info`) VALUES
+(1, 'Amader Dua', '50', '123456', 'Rafsan', '01684545111', '1687712029992__Welcome Scan.jpg', 1, 'RBR', 'Anik & Co', '730/5/1, Block-C, Khilgaon, Dhaka', '9876543201', '01684545111', '1687712029999__madhobi pouroshobha.pdf', 1, 'Anik#123456,Anikk#1234567');
+
 -- --------------------------------------------------------
 
 --
@@ -232,15 +277,15 @@ CREATE TABLE `record_entry` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- 5 Dumping data for table `record_entry`
+-- Dumping data for table `record_entry`
 --
 
 INSERT INTO `record_entry` (`id`, `job_entry_id`, `date_from_charpotro`, `cp_number_from_charpotro`, `LA_name`, `LV_name`, `dest_from`, `dest_to`, `capacity`, `rate`, `LV_master_name`, `LV_master_contact_number`, `date_created`, `date_updated`) VALUES
-(1, 1, '2021-08-11', 1, 'LA_name1', 'LV_name1', 'dest_from1', 'dest_to1', 1, 1, 'LV_master_name1', '01700000000', '2023-07-05 13:48:24', '2023-07-05 13:48:24'),
-(2, 1, '2021-08-11', 2, 'LA_name2', 'LV_name2', 'dest_from2', 'dest_to2', 2, 2, 'LV_master_name2', '01700000000', '2023-07-05 13:48:24', '2023-07-05 13:48:24'),
-(3, 2, '2021-08-11', 3, 'LA_name3', 'LV_name3', 'dest_from3', 'dest_to3', 3, 3, 'LV_master_name3', '01700000000', '2023-07-05 13:48:24', '2023-07-05 13:48:24'),
-(4, 3, '2021-08-11', 4, 'LA_name4', 'LV_name4', 'dest_from4', 'dest_to4', 4, 4, 'LV_master_name4', '01700000000', '2023-07-05 13:48:24', '2023-07-05 13:48:24'),
-(5, 3, '2021-08-11', 5, 'LA_name5', 'LV_name5', 'dest_from5', 'dest_to5', 5, 5, 'LV_master_name5', '01700000000', '2023-07-05 13:48:24', '2023-07-05 13:48:24');
+(1, 1, '2021-08-11', 1, 'LA_name1', 'LV_name1', 'dest_from1', 'dest_to1', 1, 1, 'LV_master_name1', '01700000000', '2023-07-05', '2023-07-05'),
+(2, 1, '2021-08-11', 2, 'LA_name2', 'LV_name2', 'dest_from2', 'dest_to2', 2, 2, 'LV_master_name2', '01700000000', '2023-07-05', '2023-07-05'),
+(3, 2, '2021-08-11', 3, 'LA_name3', 'LV_name3', 'dest_from3', 'dest_to3', 3, 3, 'LV_master_name3', '01700000000', '2023-07-05', '2023-07-05'),
+(4, 3, '2021-08-11', 4, 'LA_name4', 'LV_name4', 'dest_from4', 'dest_to4', 4, 4, 'LV_master_name4', '01700000000', '2023-07-05', '2023-07-05'),
+(5, 3, '2021-08-11', 5, 'LA_name5', 'LV_name5', 'dest_from5', 'dest_to5', 5, 5, 'LV_master_name5', '01700000000', '2023-07-05', '2023-07-05');
 
 --
 -- Triggers `record_entry`
@@ -270,6 +315,18 @@ CREATE TABLE `users` (
   `user_created_time` datetime NOT NULL,
   `enabled` int(11) NOT NULL DEFAULT 1
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `users`
+--
+
+INSERT INTO `users` (`id`, `name`, `username`, `password`, `position`, `department`, `user_created_time`, `enabled`) VALUES
+(1, 'Fahim', 'hasibarrafiulfahim@gmail.com', '456d857786314e3a20a6c90582d25a0995f15977940c91e7b466e52b937f7e50', 'admin', 'accounts', '2023-02-26 12:00:58', 1),
+(2, 'rashik', 'rashik', '5fb62704057fe5b652be548e74c628c5681adf87ca77b1b27ee470e33f29b6f9', 'admin', 'accounts', '2023-02-28 03:43:41', 1),
+(4, 'Shahadat Anik', 'Anik', 'a9f5007446fc27de3c8e785574e0c10ea2bebd088e38a5c50143be35350b3328', 'operations', 'Napa', '2023-04-02 19:55:54', 1),
+(5, 'Nakib Bhai', 'Nakib', 'f09e4bc8c9ee106c535e01fc372484f275cb422689fc8cfb6dceddbd074fd130', 'operations', 'null', '2023-04-02 23:03:42', 1),
+(6, 'Anik123', 'Anik123', 'bd3730f88242d05062c2c59be1284cd51887bf7ac6aa084295f0941f3397998c', 'accounts', 'null', '2023-04-02 23:07:41', 1),
+(7, 'Prime', 'Prime', 'dd8444850764b8740de73e71453b36697dc0c8bfa173ec1f3cece323ffff98e0', 'accounts-manager', 'null', '2023-04-02 23:08:49', 1);
 
 --
 -- Indexes for dumped tables
@@ -343,31 +400,31 @@ ALTER TABLE `users`
 -- AUTO_INCREMENT for table `chq_approval`
 --
 ALTER TABLE `chq_approval`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT for table `chq_due_list`
 --
 ALTER TABLE `chq_due_list`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT for table `current_status`
 --
 ALTER TABLE `current_status`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT for table `demurrage_dispatch`
 --
 ALTER TABLE `demurrage_dispatch`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT for table `job_entry`
 --
 ALTER TABLE `job_entry`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT for table `payment`
@@ -379,19 +436,19 @@ ALTER TABLE `payment`
 -- AUTO_INCREMENT for table `pre_defined_ship`
 --
 ALTER TABLE `pre_defined_ship`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT for table `record_entry`
 --
 ALTER TABLE `record_entry`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
 
 --
 -- Constraints for dumped tables
